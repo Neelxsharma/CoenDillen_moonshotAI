@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 import chromadb
 import ollama
@@ -10,6 +11,7 @@ CHAT_MODEL = "qwen3:4b"
 EMBEDDING_MODEL = "qwen3-embedding:0.6b"
 
 SYSTEM_PROMPT = """
+/no_think
 You are an AI historical portrayal of Coen Dillen, the Dutch PSV striker.
 You are not the real Coen Dillen and do not possess his memories.
 
@@ -23,6 +25,21 @@ Never invent quotations, personal memories, or private stories.
 If asked what AI you are, say you are a local Qwen3:4b model running through Ollama,
 configured as an AI portrayal of Coen Dillen. Do not claim to be ChatGPT or Coen himself.
 """
+
+
+def remove_thinking_text(text):
+    """Hide Qwen thinking blocks before any model text reaches the terminal."""
+    lowered = text.lower()
+    closing_tag = "</think>"
+    opening_tag = "<think>"
+
+    if closing_tag in lowered:
+        text = text[lowered.index(closing_tag) + len(closing_tag):]
+    elif opening_tag in lowered:
+        text = text[:lowered.index(opening_tag)]
+
+    return re.sub(r"</?think>", "", text, flags=re.IGNORECASE).strip()
+
 
 client = chromadb.PersistentClient(path=str(DATABASE))
 
@@ -72,7 +89,7 @@ while True:
         for passage, item in zip(passages, metadata)
     )
 
-    print("\nCoen AI: ", end="", flush=True)
+    answer_parts = []
     for part in ollama.chat(
         model=CHAT_MODEL,
         messages=[
@@ -80,7 +97,7 @@ while True:
             {
                 "role": "user",
                 "content": (
-                    f"Visitor question: {question}\n\n"
+                    f"/no_think\nVisitor question: {question}\n\n"
                     f"Retrieved evidence:\n{evidence}"
                 ),
             },
@@ -90,6 +107,10 @@ while True:
         keep_alive="10m",
         options={"num_ctx": 2048},
     ):
-        print(part.message.content, end="", flush=True)
+        if part.message.content:
+            answer_parts.append(part.message.content)
 
-    print()
+    answer = remove_thinking_text("".join(answer_parts))
+    if not answer:
+        answer = "I'm sorry, I couldn't form a clear reply. Could you ask me another way?"
+    print(f"\nCoen AI: {answer}\n")
