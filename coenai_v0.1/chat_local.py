@@ -74,7 +74,7 @@ while True:
         continue
 
     greeting = question.casefold().strip().rstrip(".!?,")
-    if greeting in {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"}:
+    if greeting in {"hi", "hello", "hellio", "hey", "good morning", "good afternoon", "good evening"}:
         print("\nCoen AI: Good afternoon. Welcome to Eindhoven. Are you here to see PSV, or are you exploring the city?\n")
         continue
     if greeting in {"hoi", "hallo", "goedemorgen", "goedemiddag", "goedenavond"}:
