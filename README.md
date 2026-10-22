@@ -2,7 +2,7 @@
 
 This repository contains the first local prototype of CoenAI, a source-grounded conversational portrayal of Dutch footballer Coen Dillen.
 
-The prototype runs a Qwen chat model and embedding model through Ollama. It indexes reviewed notes in ChromaDB, retrieves passages relevant to a visitor's question, and asks the language model to answer using that evidence. It is retrieval-augmented generation (RAG), not a model trained to be Coen Dillen. Replies stream into the terminal as they are generated, with Qwen3 thinking disabled. The app lets the model choose an appropriate answer length and instructs it to return only visitor-facing text.
+The prototype runs a Qwen chat model and embedding model through Ollama. It indexes reviewed notes in ChromaDB, retrieves passages relevant to a visitor's question, and asks the language model to answer using that evidence. It is retrieval-augmented generation (RAG), not a model trained to be Coen Dillen. The app instructs Qwen3 to use non-thinking mode and buffers the generated answer so any marked thinking text can be removed before it is displayed. It lets the model choose an appropriate answer length and returns visitor-facing text.
 
 CoenAI is not Coen Dillen and does not have his memories or personal experiences.
 
