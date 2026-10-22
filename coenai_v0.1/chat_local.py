@@ -38,7 +38,18 @@ def remove_thinking_text(text):
     elif opening_tag in lowered:
         text = text[:lowered.index(opening_tag)]
 
-    return re.sub(r"</?think>", "", text, flags=re.IGNORECASE).strip()
+    text = re.sub(r"</?think>", "", text, flags=re.IGNORECASE).strip()
+    lowered = text.lower()
+    internal_markers = (
+        "the user asked", "the user greeted", "i need to follow the",
+        "i should respond", "i should mention", "the response should be",
+        "let me check the retrieved evidence", "checks rules again",
+        "must remember the rules", "character specifications",
+        "my system instructions",
+    )
+    if any(marker in lowered for marker in internal_markers):
+        return ""
+    return text
 
 
 client = chromadb.PersistentClient(path=str(DATABASE))
