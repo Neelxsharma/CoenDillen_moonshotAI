@@ -2,7 +2,7 @@
 
 This repository contains the first local prototype of CoenAI, a source-grounded conversational portrayal of Dutch footballer Coen Dillen.
 
-The prototype runs a Qwen chat model and embedding model through Ollama. It indexes reviewed notes in ChromaDB, retrieves passages relevant to a visitor's question, and asks the language model to answer using that evidence. It is retrieval-augmented generation (RAG), not a model trained to be Coen Dillen. The app instructs Qwen3 to use non-thinking mode and buffers the answer so marked thinking text can be removed before display. It replies briefly by default, expands when asked, and has no fixed word or token cap.
+The prototype uses the smaller Qwen3 1.7B chat model and an embedding model through Ollama to reduce response time on modest hardware; the smaller chat model may be less capable than Qwen3 4B. It indexes reviewed notes in ChromaDB, retrieves passages relevant to a visitor's question, and asks the language model to answer using that evidence. It is retrieval-augmented generation (RAG), not a model trained to be Coen Dillen. The app instructs Qwen3 to use non-thinking mode and buffers the answer so marked thinking text can be removed before display. It replies briefly by default, expands when asked, and has no fixed word or token cap.
 
 CoenAI is not Coen Dillen and does not have his memories or personal experiences.
 
@@ -20,7 +20,7 @@ The generated ChromaDB database and Python virtual environment are intentionally
 Install [Ollama](https://ollama.com/download), then open PowerShell at the repository folder:
 
 ```powershell
-ollama pull qwen3:4b
+ollama pull qwen3:1.7b
 ollama pull qwen3-embedding:0.6b
 
 cd .\coenai_v0.1
