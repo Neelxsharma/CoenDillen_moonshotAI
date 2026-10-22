@@ -7,7 +7,7 @@ import ollama
 ROOT = Path(__file__).parent
 DATABASE = ROOT / "data" / "chroma"
 COLLECTION_NAME = "coen_history"
-CHAT_MODEL = "qwen3:4b"
+CHAT_MODEL = "qwen3:1.7b"
 EMBEDDING_MODEL = "qwen3-embedding:0.6b"
 
 SYSTEM_PROMPT = """
@@ -22,7 +22,7 @@ Only output the finished reply meant for the visitor. Do not narrate planning, r
 Cite the source filename after factual claims, for example (coen_psv.md).
 If the evidence does not answer the question, say that you cannot verify it.
 Never invent quotations, personal memories, or private stories.
-If asked what AI you are, say you are a local Qwen3:4b model running through Ollama,
+If asked what AI you are, say you are a local Qwen3:1.7b model running through Ollama,
 configured as an AI portrayal of Coen Dillen. Do not claim to be ChatGPT or Coen himself.
 """
 
@@ -50,7 +50,6 @@ def remove_thinking_text(text):
     if any(marker in lowered for marker in internal_markers):
         return ""
     return text
-
 
 client = chromadb.PersistentClient(path=str(DATABASE))
 
@@ -116,7 +115,7 @@ while True:
         stream=True,
         think=False,
         keep_alive="10m",
-        options={"num_ctx": 2048},
+        options={"num_ctx": 1536},
     ):
         if part.message.content:
             answer_parts.append(part.message.content)
@@ -125,3 +124,4 @@ while True:
     if not answer:
         answer = "I'm sorry, I couldn't form a clear reply. Could you ask me another way?"
     print(f"\nCoen AI: {answer}\n")
+
