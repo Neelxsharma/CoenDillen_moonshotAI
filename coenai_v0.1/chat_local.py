@@ -52,6 +52,24 @@ def remove_thinking_text(text):
         return ""
     return text
 
+
+def remove_repeated_goal_record(answer, question, history):
+    asked_about_scoring = re.search(r"\b(43|goal|goals|score|scoring|record)\b", question, re.IGNORECASE)
+    record_already_shared = any(
+        message["role"] == "assistant"
+        and re.search(r"\b(43|forty[- ]three)\b", message["content"], re.IGNORECASE)
+        for message in history
+    )
+    if asked_about_scoring or not record_already_shared:
+        return answer
+
+    sentences = re.split(r"(?<=[.!?])\s+", answer)
+    answer = " ".join(
+        sentence for sentence in sentences
+        if not re.search(r"\b(43|forty[- ]three)\b", sentence, re.IGNORECASE)
+    ).strip()
+    return answer or "I don't have another verified detail to add about that yet."
+
 client = chromadb.PersistentClient(path=str(DATABASE))
 
 try:
@@ -156,6 +174,7 @@ while True:
             answer_parts.append(part.message.content)
 
     answer = remove_thinking_text("".join(answer_parts))
+    answer = remove_repeated_goal_record(answer, question, conversation_history)
     if not answer:
         answer = "I'm sorry, I couldn't form a clear reply. Could you ask me another way?"
     print(f"\nCoen AI: {answer}\n")
