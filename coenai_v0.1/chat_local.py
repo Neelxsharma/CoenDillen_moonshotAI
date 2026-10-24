@@ -65,6 +65,7 @@ if collection.count() == 0:
 print("Coen Dillen local prototype. Type 'quit' to leave.")
 
 conversation_history = []
+conversation_started = False
 last_greeting = None
 english_greetings = [
     "Hello. What would you like to know about PSV or Eindhoven?",
@@ -93,12 +94,16 @@ while True:
         continue
 
     greeting = question.casefold().strip().rstrip(".!?,")
-    if greeting in {"hi", "hello", "hellio", "hey", "good morning", "good afternoon", "good evening"}:
+    if not conversation_started and greeting in {"hi", "hello", "hellio", "hey", "good morning", "good afternoon", "good evening"}:
+        conversation_started = True
         print(f"\nCoen AI: {choose_greeting(english_greetings)}\n")
         continue
-    if greeting in {"hoi", "hallo", "goedemorgen", "goedemiddag", "goedenavond"}:
+    if not conversation_started and greeting in {"hoi", "hallo", "goedemorgen", "goedemiddag", "goedenavond"}:
+        conversation_started = True
         print(f"\nCoen AI: {choose_greeting(dutch_greetings)}\n")
         continue
+
+    conversation_started = True
 
     question_embedding = ollama.embed(
         model=EMBEDDING_MODEL,
