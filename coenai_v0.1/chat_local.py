@@ -74,7 +74,8 @@ def remove_repeated_goal_record(answer, question, history):
 def enforce_first_person(answer):
     """Convert third-person self-reference in model output to first person."""
     answer = re.sub(r"\b(?:Coen\s+)?Dillen['’]s\b", "my", answer, flags=re.IGNORECASE)
-    answer = re.sub(r"\bCoen\s+Dillen\b", "I", answer, flags=re.IGNORECASE)
+    answer = re.sub(r"\bCoen\s+Dillen\s+is\b", "I am", answer, flags=re.IGNORECASE)
+    answer = re.sub(r"\bCoen\s+Dillen\s+(?=(?:was|scored|played|had|has|became|retired|represented|joined|left|won|made|was born)\b)", "I ", answer, flags=re.IGNORECASE)
 
     def convert_he_clause(match):
         verb = match.group(1)
@@ -116,14 +117,24 @@ conversation_history = []
 conversation_started = False
 last_greeting = None
 english_greetings = [
-    "Hello. What would you like to know about PSV or Eindhoven?",
-    "Hello there. Are you interested in football history or the city?",
-    "Good to see you. What would you like to explore first?",
+    "Welcome to Eindhoven. I can talk with you about PSV, Dutch football in my playing years, or the history of Strijp and the city. What brings you here, and where would you like to begin?",
+    "Good to have you here. We can explore PSV, football in the 1950s, or how Eindhoven has changed over time. Tell me what you are curious about, and I will start there.",
+    "Welcome. My story is one part of Eindhoven's wider history. Would you like to begin with PSV, my years in football, or the city and its neighborhoods?",
 ]
 dutch_greetings = [
-    "Hallo. Wat wilt u weten over PSV of Eindhoven?",
-    "Goedendag. Bent u geïnteresseerd in voetbalgeschiedenis of de stad?",
-    "Fijn u te zien. Waar zullen we mee beginnen?",
+    "Welkom in Eindhoven. Ik kan u vertellen over PSV, het voetbal in mijn speelperiode of de geschiedenis van Strijp en de stad. Wat brengt u hier, en waar wilt u beginnen?",
+    "Fijn dat u er bent. We kunnen PSV, het voetbal in de jaren vijftig of de veranderingen in Eindhoven bespreken. Waar bent u nieuwsgierig naar?",
+    "Welkom. Mijn verhaal is één deel van de geschiedenis van Eindhoven. Wilt u beginnen bij PSV, mijn voetbaljaren of de stad en haar buurten?",
+]
+followup_greetings = [
+    "I'm here. What would you like to explore next—PSV, football in my era, or Eindhoven?",
+    "Ready when you are. Which part of PSV or Eindhoven's history interests you?",
+    "What would you like to ask about next? I can help with the football or city history in my notes.",
+]
+dutch_followup_greetings = [
+    "Ik ben er. Wat wilt u hierna ontdekken: PSV, het voetbal in mijn tijd of Eindhoven?",
+    "Waar bent u nieuwsgierig naar? Ik kan u helpen met de voetbal- of stadsgeschiedenis in mijn bronnen.",
+    "Wat wilt u hierna vragen?",
 ]
 
 def choose_greeting(options):
@@ -142,13 +153,15 @@ while True:
         continue
 
     greeting = question.casefold().strip().rstrip(".!?,")
-    if not conversation_started and greeting in {"hi", "hello", "hellio", "hey", "good morning", "good afternoon", "good evening"}:
+    if greeting in {"hi", "hello", "hellio", "hey", "good morning", "good afternoon", "good evening"}:
+        options = english_greetings if not conversation_started else followup_greetings
         conversation_started = True
-        print(f"\nCoen AI: {choose_greeting(english_greetings)}\n")
+        print(f"\nCoen AI: {choose_greeting(options)}\n")
         continue
-    if not conversation_started and greeting in {"hoi", "hallo", "goedemorgen", "goedemiddag", "goedenavond"}:
+    if greeting in {"hoi", "hallo", "goedemorgen", "goedemiddag", "goedenavond"}:
+        options = dutch_greetings if not conversation_started else dutch_followup_greetings
         conversation_started = True
-        print(f"\nCoen AI: {choose_greeting(dutch_greetings)}\n")
+        print(f"\nCoen AI: {choose_greeting(options)}\n")
         continue
 
     conversation_started = True
