@@ -39,6 +39,18 @@ files = list(SOURCES.glob("*.md")) + list(SOURCES.glob("*.txt"))
 if not files:
     raise SystemExit("No .md or .txt source notes found in the sources folder.")
 
+# Remove indexed records for files that have been moved out of sources.
+current_source_names = {file_path.name for file_path in files}
+existing = collection.get(include=["metadatas"])
+indexed_source_names = {
+    metadata.get("source")
+    for metadata in existing["metadatas"]
+    if metadata and metadata.get("source")
+}
+for stale_source in indexed_source_names - current_source_names:
+    collection.delete(where={"source": stale_source})
+    print(f"Removed old indexed material for {stale_source}")
+
 for file_path in files:
     text = file_path.read_text(encoding="utf-8")
     chunks = split_into_chunks(text)
