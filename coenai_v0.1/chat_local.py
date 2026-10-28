@@ -177,7 +177,7 @@ while True:
             if model_question else
             "I'm an AI historical portrayal of Coen Dillen. I speak in first person about sourced facts from my career, but I'm not the real Coen and I don't have personal memories."
         )
-        print(f"\\nCoen AI: {answer}\\n")
+        print(f"\nCoen AI: {answer}\n")
         conversation_history.extend([
             {"role": "user", "content": question},
             {"role": "assistant", "content": answer},
