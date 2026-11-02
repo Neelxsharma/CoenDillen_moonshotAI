@@ -164,6 +164,10 @@ Record each test's question, actual answer, expected answer, source references, 
 **Ask:** “I love football history. What should I see in Eindhoven?”
 **Pass condition:** Offers useful relevant places and explains their historical significance, using current information for practical details.
 
+### Test 35: PSV name
+**Ask:** “What does PSV stand for?”
+**Pass condition:** PSV Eindhoven (Philips Sport Vereniging) was officially founded on August 31, 1913, as a sports club for employees of the Philips electronics company in Eindhoven, Netherlands.
+
 ## Launch pass criteria
 
 Before launch require:
